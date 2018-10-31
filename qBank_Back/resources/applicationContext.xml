@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:oscache="http://www.springmodules.org/schema/oscache" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springmodules.org/schema/oscache http://www.springmodules.org/schema/cache/springmodules-oscache.xsd" default-lazy-init="true">
+
+	<context:component-scan base-package="com.qbank" />
+	
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath*:/database.properties</value>
+			</list>
+		</property>
+	</bean>
+	<!-- 配置数据源1 -->
+	<bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="initialSize" value="${pool.initialSize}" />
+		<!-- 连接池最大使用连接数量 -->
+		<property name="maxActive" value="${pool.maxActive}" />
+		<!-- 连接池最大空闲 
+		<property name="maxIdle" value="${pool.maxIdle}" />-->
+		<!-- 连接池最小空闲 -->
+		<property name="minIdle" value="${pool.minIdle}" />
+		<!-- 获取连接最大等待时间 -->
+		<property name="maxWait" value="${pool.maxWait}" />
+		<!-- <property name="poolPreparedStatements" value="true" /> <property 
+			name="maxPoolPreparedStatementPerConnectionSize" value="33" /> -->
+		<property name="validationQuery" value="${validationQuery.sqlserver}" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+		<property name="testWhileIdle" value="true" />
+
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="${pool.timeBetweenEvictionRunsMillis}" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="${pool.minEvictableIdleTimeMillis}" />
+
+		<!-- 打开removeAbandoned功能 -->
+		<property name="removeAbandoned" value="${pool.removeAbandoned}" />
+		<!-- 1800秒，也就是30分钟 -->
+		<property name="removeAbandonedTimeout" value="${pool.removeAbandonedTimeout}" />
+		<!-- 关闭abanded连接时输出错误日志 -->
+		<property name="logAbandoned" value="${pool.logAbandoned}" />
+		<!-- 开启Druid的监控统计功能 --> 
+		<property name="filters" value="stat,log4j" />
+		<!--<property name="filters" value="${pool.filters}" />
+		<property name="proxyFilters">
+			<list>
+				<ref bean="log-filter"/>
+				<ref bean="wall-filter"/>
+				<ref bean="stat-filter"/>
+			</list>
+		</property> -->
+		<!--<property name="filters" value="mergeStat" /> -->
+		<!-- Oracle连接是获取字段注释 -->
+		<property name="connectProperties">
+			<props>
+				<prop key="remarksReporting">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="databaseNamingStrategy" class="com.qbank.common.DatabaseNamingStrategy">
+		<property name="tablePrefix" value="qb_" />
+		<property name="isAddUnderscores" value="true" />
+		<property name="maxLength" value="64" />
+    </bean>
+	
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="entityInterceptor" ref="entityInterceptor" />
+		<property name="namingStrategy" ref="databaseNamingStrategy" />
+		<property name="hibernateProperties">
+			<value>
+				hibernate.dialect=${hibernate.dialect}
+				hibernate.hbm2ddl.auto=${hibernate.hbm2ddl.auto}
+				hibernate.show_sql=${hibernate.show_sql}
+				hibernate.format_sql=${hibernate.format_sql}
+				hibernate.cache.use_second_level_cache=${hibernate.cache.use_second_level_cache}
+				hibernate.cache.provider_class=${hibernate.cache.provider_class}
+				hibernate.cache.use_query_cache=${hibernate.cache.use_query_cache}
+				hibernate.jdbc.fetch_size=${hibernate.jdbc.fetch_size}
+				hibernate.jdbc.batch_size=${hibernate.jdbc.batch_size}
+			</value>
+		</property>
+		<property name="packagesToScan" value="com.qbank.entity"/>
+	</bean>
+    
+    <bean id="springUtil" class="com.qbank.util.SpringUtil" lazy-init="false" />
+	<bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="5" />
+		<property name="maxPoolSize" value="50" />
+		<property name="queueCapacity" value="1000" />
+		<property name="keepAliveSeconds" value="60" />
+	</bean>
+	<bean id="txManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<tx:annotation-driven transaction-manager="txManager" />
+	
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+</beans>

@@ -1,0 +1,100 @@
+@CHARSET "UTF-8";
+div.content {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        height: 95.999999%;
+    }
+    
+    .ProductBoxTitle-cont {
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 15px;
+    }
+    
+    .ui-container {
+        background-color: #efefef!important;
+    }
+    
+    .content {
+        background: #fff;
+        padding: 15px;
+    }
+    
+    .b_nav {
+        font-size: 20px;
+        text-align: center;
+        color: #900a90;
+        margin: 20px 0px;
+    }
+    
+    .input-group .form-control {
+        width: 88%;
+    }
+    
+    .ProductBoxTitle-cont a {
+        color: #00bfa5;
+        line-height:normal;
+    }
+    
+    .ProductBoxTitle-cont a:hover {
+        border-bottom: 1px solid #00bfa5;
+    }
+    
+    .table-responsive {
+        padding: 20px;
+    }
+    
+    .table td,
+    .table th {
+        border: 0px !important;
+        text-align: center;
+    }
+    
+    .table-bordered {
+        border-left: 1px solid #ddd;
+    }
+    
+    .table thead th {
+        background-color: #00bfa5;
+        color: #fff;
+    }
+    
+    li.content-wrapper {
+        height: auto;
+    }
+    
+    .btn-cta-primary {
+        width: 140px;
+        margin: 0px auto 20px;
+    }
+    
+    a.btn-cta-primary:visited {
+        color: #fff;
+    }
+    
+    .label {
+        line-height: 2;
+        border-radius: 10px;
+    }
+    
+    .table>tbody>tr>td,
+    .table>tbody>tr>th,
+    .table>tfoot>tr>td,
+    .table>tfoot>tr>th,
+    .table>thead>tr>td,
+    .table>thead>tr>th {
+        line-height: 2;
+    }
+     .a{
+    	margin-left: -24px;
+    }
+    .data-submission .input-group{
+        width:120%;
+    }
+.data-subnission .row  input,    
+.data-subnission .row  button{
+    float: left;
+    width: 100%;
+}
+.row{
+    height: 40px;
+}
